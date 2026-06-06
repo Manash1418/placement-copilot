@@ -1,12 +1,8 @@
-import CoverPage from './CoverPage';
 import { useState, useEffect } from 'react';
-import React from 'react'; // Added explicit import for React hooks safety if using older versions
+import React from 'react'; 
 import axios from 'axios';
 
 function App() {
-  // --- NEW: COVERSHEET AND VIEW ROUTING SYSTEM ---
-  const [showApp, setShowApp] = useState(false);
-
   const [backendMessage, setBackendMessage] = useState('CONNECTING TO BACKEND...');
   const [serverStatus, setServerStatus] = useState('loading');
   const [selectedFile, setSelectedFile] = useState(null);
@@ -50,14 +46,12 @@ function App() {
     return () => clearInterval(interval);
   }, [timerActive, timeLeft]);
 
-  // Format integer seconds into MM:SS layout
   const formatTimer = () => {
     const minutes = Math.floor(timeLeft / 60);
     const seconds = timeLeft % 60;
     return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  // Handle local data switching inside code editor pane
   const updateEditorText = (textValue) => {
     setEditorContents(prev => ({
       ...prev,
@@ -65,7 +59,6 @@ function App() {
     }));
   };
 
-  // Dynamic state mapper for compiler choice dropdown toggles
   const handleCompilerChange = (lang) => {
     if (lang === 'c') {
       setEditorContents(prev => ({
@@ -207,7 +200,6 @@ function App() {
   const handleAnswerSubmit = async () => {
     setEvalLoading(true);
     try {
-      // FIXED: Swapped out localhost for your live production Render API deployment link
       const response = await axios.post('https://placement-copilot-buvp.onrender.com/api/evaluate-answer', {
         question: currentQuestion,
         user_answer: editorContents.main_file
@@ -223,28 +215,17 @@ function App() {
     }
   };
 
-  // --- INTERCEPT ROUTING: Show cover details if user hasn't clicked past it ---
-  if (!showApp) {
-    return <CoverPage onExplore={() => setShowApp(true)} />;
-  }
-
-  // --- PRIMARY DASHBOARD HTML APP COMPONENT VIEW ---
+  // --- PRIMARY DASHBOARD VIEW ---
   return (
     <div style={{ backgroundColor: '#0b111e', color: '#f1f5f9', display: 'flex', flexDirection: 'column', fontFamily: 'system-ui, sans-serif', boxSizing: 'border-box', margin: 0, minHeight: '100vh' }}>
       
       {/* HEADER SYSTEM BAR */}
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 2.5rem', backgroundColor: '#0f172a', borderBottom: '1px solid #1e293b', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ backgroundColor: '#0284c7', color: 'white', padding: '0.4rem 0.6rem', borderRadius: '8px', fontWeight: 'bold', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifycontent: 'center' }}>🤖</div>
+          <div style={{ backgroundColor: '#0284c7', color: 'white', padding: '0.4rem 0.6rem', borderRadius: '8px', fontWeight: 'bold', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🤖</div>
           <span style={{ fontSize: '1.25rem', fontWeight: 'bold', letterSpacing: '0.5px', color: '#e2e8f0' }}>Placement Copilot</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <button 
-            onClick={() => setShowApp(false)}
-            style={{ backgroundColor: 'transparent', border: '1px solid #334155', color: '#94a3b8', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}
-          >
-            ← View Cover Page
-          </button>
           <button onClick={() => setActiveTab('mock-qa')} style={{ backgroundColor: 'transparent', border: '1px solid #0284c7', color: '#38bdf8', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
             + Mock Session
           </button>
@@ -254,7 +235,7 @@ function App() {
       {/* MAIN SCREEN DISPATCH HUB */}
       <div style={{ padding: '2rem 2.5rem 8rem 2.5rem', maxWidth: '1200px', width: '100%', margin: '0 auto', boxSizing: 'border-box' }}>
         
-        {/* TAB 1: HOME PANEL (COMPACT SIDE-BY-SIDE GRID) */}
+        {/* TAB 1: HOME PANEL */}
         {activeTab === 'home' && (
           <div style={{ display: 'grid', gridTemplateColumns: result ? '1fr 1fr' : '1fr', gap: '2rem', alignItems: 'start' }}>
             
@@ -340,10 +321,10 @@ function App() {
           </div>
         )}
 
-        {/* TAB 2: TECHNICAL INTERVIEW LABORATORY WORKSPACE */}
+        {/* TAB 2: TECHNICAL INTERVIEW WORKSPACE */}
         {activeTab === 'mock-qa' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifycontent: 'space-between', borderBottom: '1px solid #1e293b', paddingBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1e293b', paddingBottom: '0.75rem' }}>
               <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#ffffff' }}>Technical Evaluation Room 🖥️</h2>
               <button onClick={() => fetchNewQuestion()} disabled={questionLoading} style={{ backgroundColor: '#1e293b', color: '#38bdf8', border: '1px solid #334155', padding: '0.5rem 1.2rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
                 {questionLoading ? 'Generating Challenge...' : '🔄 Next Random Gap Challenge'}
@@ -351,7 +332,7 @@ function App() {
             </div>
 
             <div style={{ backgroundColor: '#111827', border: '1px solid #1e293b', padding: '1.25rem', borderRadius: '12px' }}>
-              <div style={{ display: 'flex', justifycontent: 'space-between', color: '#64748b', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#64748b', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 'bold' }}>
                 <span>TOPIC DOMAIN: <strong style={{ color: '#e2e8f0' }}>{activeSkill}</strong></span>
                 <span style={{ color: '#f43f5e', fontFamily: 'monospace', letterSpacing: '0.5px' }}>⏳ TIMER: {formatTimer()}</span>
               </div>
@@ -359,7 +340,7 @@ function App() {
             </div>
 
             <div style={{ border: '1px solid #1e293b', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#070a13' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifycontent: 'space-between', backgroundColor: '#0f172a', padding: '0.4rem 1rem', borderBottom: '1px solid #1e293b' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#0f172a', padding: '0.4rem 1rem', borderBottom: '1px solid #1e293b' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                   <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#ef4444', marginRight: '4px' }} />
                   <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#eab308', marginRight: '4px' }} />
@@ -410,7 +391,7 @@ function App() {
               </div>
 
               <div style={{ backgroundColor: '#090d16', borderTop: '1px solid #1e293b', padding: '0.75rem 1rem', fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                <div style={{ display: 'flex', justifycontent: 'space-between', color: '#00d2ff', marginBottom: '0.25rem', fontWeight: 'bold' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#00d2ff', marginBottom: '0.25rem', fontWeight: 'bold' }}>
                   <span>&gt;_ CONSOLE METRICS LOGS</span>
                   <span style={{ color: '#475569', cursor: 'pointer' }} onClick={() => updateEditorText('')}>Reset File</span>
                 </div>
@@ -428,7 +409,7 @@ function App() {
 
             {evalResult && (
               <div style={{ backgroundColor: '#111827', border: '1px solid #1e293b', padding: '1.5rem', borderRadius: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifycontent: 'space-between', borderBottom: '1px solid #1e293b', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1e293b', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
                   <h4 style={{ margin: 0, color: '#00d2ff', fontWeight: 'bold' }}>Assessment Score Breakdown</h4>
                   <span style={{ fontSize: '1.35rem', fontWeight: 'bold', color: '#34d399' }}>{evalResult.score} / 100 <small style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 'normal' }}>({evalResult.correctness})</small></span>
                 </div>
@@ -451,7 +432,7 @@ function App() {
           </div>
         )}
 
-        {/* TAB 3: TIMELINE MILESTONE TRACK ROADMAP */}
+        {/* TAB 3: ROADMAP PANELS */}
         {activeTab === 'roadmap' && (
           <div style={{ backgroundColor: '#111827', border: '1px solid #1e293b', padding: '2.5rem', borderRadius: '16px' }}>
             <h2 style={{ marginTop: 0, color: '#ffffff', fontSize: '1.4rem' }}>Personalized Skill-Gap Bridging Roadmap</h2>
