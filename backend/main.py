@@ -26,7 +26,7 @@ app.add_middleware(
 
 # 🚀 INITIALIZE THE FREE GROQ CLIENT
 # Paste your active 'gsk_' key directly inside the quotes below
-client = Groq(api_key="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")
+client = Groq()
 
 
 @app.get("/")
