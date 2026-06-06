@@ -127,7 +127,7 @@ function App() {
   }
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:8000/')
+    axios.get('https://placement-copilot-buvp.onrender.com/')
       .then((response) => {
         setBackendMessage(response.data.message.toUpperCase())
         setServerStatus('connected')
@@ -154,7 +154,7 @@ function App() {
     setLoading(true)
     setErrorMsg('')
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/analyze-resume', formData, {
+      const response = await axios.post('https://placement-copilot-buvp.onrender.com/api/analyze-resume', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       if (response.data.status === 'success') {
@@ -175,7 +175,7 @@ function App() {
     const targetSkills = skillsList || (result ? result.missing_skills : ["Python", "FastAPI", "SQL Databases", "Data Structures"])
     setQuestionLoading(true)
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/generate-question', {
+      const response = await axios.post('https://placement-copilot-buvp.onrender.com/api/generate-question', {
         missing_skills: targetSkills
       })
       if (response.data.status === 'success') {
