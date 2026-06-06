@@ -1,64 +1,69 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
+import CoverPage from './CoverPage';
+import { useState, useEffect } from 'react';
+import React from 'react'; // Added explicit import for React hooks safety if using older versions
+import axios from 'axios';
 
 function App() {
-  const [backendMessage, setBackendMessage] = useState('CONNECTING TO BACKEND...')
-  const [serverStatus, setServerStatus] = useState('loading')
-  const [selectedFile, setSelectedFile] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [result, setResult] = useState(null)
-  const [errorMsg, setErrorMsg] = useState('')
+  // --- NEW: COVERSHEET AND VIEW ROUTING SYSTEM ---
+  const [showApp, setShowApp] = useState(false);
+
+  const [backendMessage, setBackendMessage] = useState('CONNECTING TO BACKEND...');
+  const [serverStatus, setServerStatus] = useState('loading');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [errorMsg, setErrorMsg] = useState('');
 
   // --- NAVIGATION STATE ---
-  const [activeTab, setActiveTab] = useState('home')
+  const [activeTab, setActiveTab] = useState('home');
 
   // --- INTERVIEW WORKSPACE STATES ---
-  const [currentQuestion, setCurrentQuestion] = useState("Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.")
-  const [activeSkill, setActiveSkill] = useState("Algorithms")
-  const [questionType, setQuestionType] = useState("CODING")
-  const [evalLoading, setEvalLoading] = useState(false)
-  const [evalResult, setEvalResult] = useState(null)
-  const [questionLoading, setQuestionLoading] = useState(false)
+  const [currentQuestion, setCurrentQuestion] = useState("Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.");
+  const [activeSkill, setActiveSkill] = useState("Algorithms");
+  const [questionType, setQuestionType] = useState("CODING");
+  const [evalLoading, setEvalLoading] = useState(false);
+  const [evalResult, setEvalResult] = useState(null);
+  const [questionLoading, setQuestionLoading] = useState(false);
 
   // --- LIVE TIMER STATE (25 Minutes Standard) ---
-  const [timeLeft, setTimeLeft] = useState(1500)
-  const [timerActive, setTimerActive] = useState(true)
+  const [timeLeft, setTimeLeft] = useState(1500);
+  const [timerActive, setTimerActive] = useState(true);
 
   // --- INTERACTIVE MULTI-FILE TEXT EDITOR STORAGE ---
-  const [selectedFileTab, setSelectedFileTab] = useState('main_file')
+  const [selectedFileTab, setSelectedFileTab] = useState('main_file');
   const [editorContents, setEditorContents] = useState({
     main_file: "def two_sum(nums, target):\n    # Write your optimal O(N) solution below\n    pass",
     test_cases: "{\n  \"test_case_1\": {\n    \"nums\": [2, 7, 11, 15],\n    \"target\": 9\n  }\n}",
     diagram_notes: "# SYSTEM INFRASTRUCTURE NODE CONFIGURATIONS\n- Ingestion Gateway Tier\n- Distributed Compute Pool\n- Persistence Matrix"
-  })
+  });
 
   // --- EFFECT: HARDWARE COUNTDOWN CLOCK TICKER ---
   useEffect(() => {
-    let interval = null
+    let interval = null;
     if (timerActive && timeLeft > 0) {
       interval = setInterval(() => {
-        setTimeLeft((prevTime) => prevTime - 1)
-      }, 1000)
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
     } else if (timeLeft === 0) {
-      setTimerActive(false)
+      setTimerActive(false);
     }
-    return () => clearInterval(interval)
-  }, [timerActive, timeLeft])
+    return () => clearInterval(interval);
+  }, [timerActive, timeLeft]);
 
   // Format integer seconds into MM:SS layout
   const formatTimer = () => {
-    const minutes = Math.floor(timeLeft / 60)
-    const seconds = timeLeft % 60
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-  }
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
 
   // Handle local data switching inside code editor pane
   const updateEditorText = (textValue) => {
     setEditorContents(prev => ({
       ...prev,
       [selectedFileTab]: textValue
-    }))
-  }
+    }));
+  };
 
   // Dynamic state mapper for compiler choice dropdown toggles
   const handleCompilerChange = (lang) => {
@@ -66,18 +71,18 @@ function App() {
       setEditorContents(prev => ({
         ...prev,
         main_file: "#include <stdio.h>\n\nint* twoSum(int* nums, int numsSize, int target, int* returnSize) {\n    // Implement optimal pointer sorting logic layout here\n    return NULL;\n}"
-      }))
+      }));
     } else {
       setEditorContents(prev => ({
         ...prev,
         main_file: "def two_sum(nums, target):\n    # Write your optimal O(N) solution below\n    pass"
-      }))
+      }));
     }
-  }
+  };
 
   // --- INTERACTIVE QUICK PROFILE LOAD DISPATCH ENGINE ---
   const loadQuickProfile = (profileType) => {
-    setLoading(true)
+    setLoading(true);
     setTimeout(() => {
       if (profileType === 'Senior') {
         const mockSenior = {
@@ -90,9 +95,9 @@ function App() {
             { week: "Week 1", topic: "Distributed Machine Learning Pipelines", description: "Master tensor transformations and inference optimizations via Triton server configurations." },
             { week: "Week 2", topic: "Cloud Native Deployment Scale", description: "Audit multi-region orchestration patterns using automated infrastructure deployment scripts." }
           ]
-        }
-        setResult(mockSenior)
-        fetchNewQuestion(mockSenior.missing_skills)
+        };
+        setResult(mockSenior);
+        fetchNewQuestion(mockSenior.missing_skills);
       } else if (profileType === 'Self-Taught') {
         const mockSelfTaught = {
           ats_score: 72,
@@ -104,9 +109,9 @@ function App() {
             { week: "Week 1-2", topic: "Pointers & Memory Layouts in C", description: "Deep dive into allocation, stack verification, and reference logic blocks." },
             { week: "Week 3-4", topic: "Relational Indexing & Join Performance", description: "Optimize transaction layers and isolate resource blocks." }
           ]
-        }
-        setResult(mockSelfTaught)
-        fetchNewQuestion(mockSelfTaught.missing_skills)
+        };
+        setResult(mockSelfTaught);
+        fetchNewQuestion(mockSelfTaught.missing_skills);
       } else {
         const mockNonCS = {
           ats_score: 64,
@@ -118,116 +123,128 @@ function App() {
             { week: "Week 1", topic: "Asynchronous API Routing Layers", description: "Build scalable route routers and validate request payloads." },
             { week: "Week 2", topic: "Relational Modeling Schemes", description: "Map enterprise entity boundaries and handle cascading mutations safely." }
           ]
-        }
-        setResult(mockNonCS)
-        fetchNewQuestion(mockNonCS.missing_skills)
+        };
+        setResult(mockNonCS);
+        fetchNewQuestion(mockNonCS.missing_skills);
       }
-      setLoading(false)
-    }, 400)
-  }
+      setLoading(false);
+    }, 400);
+  };
 
   useEffect(() => {
     axios.get('https://placement-copilot-buvp.onrender.com/')
       .then((response) => {
-        setBackendMessage(response.data.message.toUpperCase())
-        setServerStatus('connected')
+        setBackendMessage(response.data.message.toUpperCase());
+        setServerStatus('connected');
       })
       .catch((error) => {
-        console.error(error)
-        setBackendMessage('BACKEND OFFLINE - HANDSHAKE FAILED')
-        setServerStatus('error')
-      })
-  }, [])
+        console.error(error);
+        setBackendMessage('BACKEND OFFLINE - HANDSHAKE FAILED');
+        setServerStatus('error');
+      });
+  }, []);
 
   const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0])
-    setErrorMsg('')
-  }
+    setSelectedFile(e.target.files[0]);
+    setErrorMsg('');
+  };
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      setErrorMsg('Please upload a PDF resume first.')
-      return
+      setErrorMsg('Please upload a PDF resume first.');
+      return;
     }
-    const formData = new FormData()
-    formData.append('file', selectedFile)
-    setLoading(true)
-    setErrorMsg('')
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    setLoading(true);
+    setErrorMsg('');
     try {
       const response = await axios.post('https://placement-copilot-buvp.onrender.com/api/analyze-resume', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
-      })
+      });
       if (response.data.status === 'success') {
-        setResult(response.data.data)
-        fetchNewQuestion(response.data.data.missing_skills)
+        setResult(response.data.data);
+        fetchNewQuestion(response.data.data.missing_skills);
       } else {
-        setErrorMsg(`Analysis Error: ${response.data.message}`)
+        setErrorMsg(`Analysis Error: ${response.data.message}`);
       }
     } catch (error) {
-      console.error(error)
-      setErrorMsg('Failed to process with the AI Engine.')
+      console.error(error);
+      setErrorMsg('Failed to process with the AI Engine.');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const fetchNewQuestion = async (skillsList) => {
-    const targetSkills = skillsList || (result ? result.missing_skills : ["Python", "FastAPI", "SQL Databases", "Data Structures"])
-    setQuestionLoading(true)
+    const targetSkills = skillsList || (result ? result.missing_skills : ["Python", "FastAPI", "SQL Databases", "Data Structures"]);
+    setQuestionLoading(true);
     try {
       const response = await axios.post('https://placement-copilot-buvp.onrender.com/api/generate-question', {
         missing_skills: targetSkills
-      })
+      });
       if (response.data.status === 'success') {
-        const aiChallenge = response.data.data
-        setCurrentQuestion(aiChallenge.question)
-        setActiveSkill(aiChallenge.skill)
-        setQuestionType(aiChallenge.question_type || "CODING")
+        const aiChallenge = response.data.data;
+        setCurrentQuestion(aiChallenge.question);
+        setActiveSkill(aiChallenge.skill);
+        setQuestionType(aiChallenge.question_type || "CODING");
         
-        setTimeLeft(1500)
-        setTimerActive(true)
+        setTimeLeft(1500);
+        setTimerActive(true);
         setEditorContents(prev => ({
           ...prev,
           main_file: aiChallenge.editor_stub || ""
-        }))
-        setEvalResult(null)
+        }));
+        setEvalResult(null);
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     } finally {
-      setQuestionLoading(false)
+      setQuestionLoading(false);
     }
-  }
+  };
 
   const handleAnswerSubmit = async () => {
-    setEvalLoading(true)
+    setEvalLoading(true);
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/evaluate-answer', {
+      // FIXED: Swapped out localhost for your live production Render API deployment link
+      const response = await axios.post('https://placement-copilot-buvp.onrender.com/api/evaluate-answer', {
         question: currentQuestion,
         user_answer: editorContents.main_file
-      })
+      });
       if (response.data.status === 'success') {
-        setEvalResult(response.data.data)
-        setTimerActive(false)
+        setEvalResult(response.data.data);
+        setTimerActive(false);
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     } finally {
-      setEvalLoading(false)
+      setEvalLoading(false);
     }
+  };
+
+  // --- INTERCEPT ROUTING: Show cover details if user hasn't clicked past it ---
+  if (!showApp) {
+    return <CoverPage onExplore={() => setShowApp(true)} />;
   }
 
+  // --- PRIMARY DASHBOARD HTML APP COMPONENT VIEW ---
   return (
     <div style={{ backgroundColor: '#0b111e', color: '#f1f5f9', display: 'flex', flexDirection: 'column', fontFamily: 'system-ui, sans-serif', boxSizing: 'border-box', margin: 0, minHeight: '100vh' }}>
       
       {/* HEADER SYSTEM BAR */}
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem 2.5rem', backgroundColor: '#0f172a', borderBottom: '1px solid #1e293b', position: 'sticky', top: 0, zIndex: 100 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div style={{ backgroundColor: '#0284c7', color: 'white', padding: '0.4rem 0.6rem', borderRadius: '8px', fontWeight: 'bold', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🤖</div>
+          <div style={{ backgroundColor: '#0284c7', color: 'white', padding: '0.4rem 0.6rem', borderRadius: '8px', fontWeight: 'bold', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifycontent: 'center' }}>🤖</div>
           <span style={{ fontSize: '1.25rem', fontWeight: 'bold', letterSpacing: '0.5px', color: '#e2e8f0' }}>Placement Copilot</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <div style={{ color: '#94a3b8', fontSize: '1.2rem', cursor: 'pointer' }}>🔔</div>
+          <button 
+            onClick={() => setShowApp(false)}
+            style={{ backgroundColor: 'transparent', border: '1px solid #334155', color: '#94a3b8', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}
+          >
+            ← View Cover Page
+          </button>
           <button onClick={() => setActiveTab('mock-qa')} style={{ backgroundColor: 'transparent', border: '1px solid #0284c7', color: '#38bdf8', padding: '0.5rem 1rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
             + Mock Session
           </button>
@@ -326,7 +343,7 @@ function App() {
         {/* TAB 2: TECHNICAL INTERVIEW LABORATORY WORKSPACE */}
         {activeTab === 'mock-qa' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1e293b', paddingBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifycontent: 'space-between', borderBottom: '1px solid #1e293b', paddingBottom: '0.75rem' }}>
               <h2 style={{ margin: 0, fontSize: '1.4rem', color: '#ffffff' }}>Technical Evaluation Room 🖥️</h2>
               <button onClick={() => fetchNewQuestion()} disabled={questionLoading} style={{ backgroundColor: '#1e293b', color: '#38bdf8', border: '1px solid #334155', padding: '0.5rem 1.2rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
                 {questionLoading ? 'Generating Challenge...' : '🔄 Next Random Gap Challenge'}
@@ -334,7 +351,7 @@ function App() {
             </div>
 
             <div style={{ backgroundColor: '#111827', border: '1px solid #1e293b', padding: '1.25rem', borderRadius: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#64748b', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 'bold' }}>
+              <div style={{ display: 'flex', justifycontent: 'space-between', color: '#64748b', fontSize: '0.8rem', textTransform: 'uppercase', marginBottom: '0.5rem', fontWeight: 'bold' }}>
                 <span>TOPIC DOMAIN: <strong style={{ color: '#e2e8f0' }}>{activeSkill}</strong></span>
                 <span style={{ color: '#f43f5e', fontFamily: 'monospace', letterSpacing: '0.5px' }}>⏳ TIMER: {formatTimer()}</span>
               </div>
@@ -342,7 +359,7 @@ function App() {
             </div>
 
             <div style={{ border: '1px solid #1e293b', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#070a13' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#0f172a', padding: '0.4rem 1rem', borderBottom: '1px solid #1e293b' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifycontent: 'space-between', backgroundColor: '#0f172a', padding: '0.4rem 1rem', borderBottom: '1px solid #1e293b' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                   <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#ef4444', marginRight: '4px' }} />
                   <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#eab308', marginRight: '4px' }} />
@@ -393,7 +410,7 @@ function App() {
               </div>
 
               <div style={{ backgroundColor: '#090d16', borderTop: '1px solid #1e293b', padding: '0.75rem 1rem', fontFamily: 'monospace', fontSize: '0.8rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#00d2ff', marginBottom: '0.25rem', fontWeight: 'bold' }}>
+                <div style={{ display: 'flex', justifycontent: 'space-between', color: '#00d2ff', marginBottom: '0.25rem', fontWeight: 'bold' }}>
                   <span>&gt;_ CONSOLE METRICS LOGS</span>
                   <span style={{ color: '#475569', cursor: 'pointer' }} onClick={() => updateEditorText('')}>Reset File</span>
                 </div>
@@ -411,7 +428,7 @@ function App() {
 
             {evalResult && (
               <div style={{ backgroundColor: '#111827', border: '1px solid #1e293b', padding: '1.5rem', borderRadius: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #1e293b', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifycontent: 'space-between', borderBottom: '1px solid #1e293b', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
                   <h4 style={{ margin: 0, color: '#00d2ff', fontWeight: 'bold' }}>Assessment Score Breakdown</h4>
                   <span style={{ fontSize: '1.35rem', fontWeight: 'bold', color: '#34d399' }}>{evalResult.score} / 100 <small style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 'normal' }}>({evalResult.correctness})</small></span>
                 </div>
@@ -477,7 +494,7 @@ function App() {
       </div>
 
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
