@@ -1,22 +1,28 @@
 @import "tailwindcss";
 
-/* If you are using Tailwind v4, tell it explicitly to parse your JSX files */
+@theme {
+  /* Explicitly tell Tailwind v4 to support custom dark palette extensions */
+  --color-bg-dark: #0b111e;
+  --color-card-dark: #101622;
+  --color-border-dark: #1e293b;
+}
+
 @source "./**/*.jsx";
 
-/* Keep a clean background color fallback variable mapping to prevent flashing */
 :root {
   background-color: #0b111e;
+  color-scheme: dark;
 }
 
 body {
   margin: 0;
   padding: 0;
   background-color: #0b111e;
+  color: #ffffff;
   min-height: 100vh;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Remove the restrictive fixed sizing from #root so grids can span full width */
 #root {
   width: 100%;
   min-height: 100vh;
